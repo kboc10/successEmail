@@ -104,7 +104,6 @@
         <i class="fas fa-check-circle icon-success"></i>
         <h1>Email confermata con successo!</h1>
         <p>Grazie! La tua email è stata verificata. Ora puoi accedere alla tua area riservata di FoodGest.</p>
-        <a href="https://foodgest.it/login" class="btn">Accedi ora</a>
       `;
     }
     // Caso 2: Token già usato o scaduto
@@ -114,14 +113,12 @@
           <i class="fas fa-exclamation-triangle icon-error"></i>
           <h1>Link non valido o scaduto</h1>
           <p>Il link di conferma è scaduto o è già stato utilizzato. L'email potrebbe essere già stata verificata.</p>
-          <a href="https://foodgest.it/login" class="btn">Vai al login</a>
         `;
       } else {
         messageDiv.innerHTML = `
           <i class="fas fa-times-circle icon-error"></i>
           <h1>Errore nella conferma</h1>
           <p>${errorDescription || 'Si è verificato un problema durante la verifica.'}</p>
-          <a href="https://foodgest.it/supporto" class="btn">Contatta supporto</a>
         `;
       }
     }
@@ -131,7 +128,6 @@
         <i class="fas fa-info-circle" style="color: #ffc107;"></i>
         <h1>Pagina di conferma</h1>
         <p>Se hai cliccato su un link di conferma, assicurati di averlo aperto direttamente dall'email.</p>
-        <a href="https://foodgest.it/login" class="btn">Torna al login</a>
       `;
     }
   </script>
