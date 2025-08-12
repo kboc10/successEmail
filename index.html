@@ -21,13 +21,13 @@
     }
     .logo-container {
       position: absolute;
-      top: 50px; /* Posizione verticale del logo */
+      top: 50px;
       left: 50%;
       transform: translateX(-50%);
     }
     .logo {
-      width: 100px; /* Dimensione maggiore */
-      height: 100px; /* Dimensione maggiore */
+      width: 100px;
+      height: 100px;
     }
     .container {
       max-width: 500px;
@@ -35,7 +35,7 @@
       background: white;
       border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      margin-top: 150px; /* Spazio per far stare il logo sopra */
+      margin-top: 150px;
     }
     .icon-success {
       color: #28a745;
@@ -82,31 +82,61 @@
 
   <div class="container">
     <div id="message">
-      <!-- Il contenuto verrà inserito qui via JavaScript -->
+      <!-- Messaggio dinamico -->
     </div>
   </div>
 
   <script>
-    // Leggi i parametri dell'URL
+    // Leggi i parametri dall'URL
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
+    const errorDescription = urlParams.get('error_description')?.toLowerCase();
+
     const messageDiv = document.getElementById('message');
 
-    if (error) {
-      // Token non valido, già usato o scaduto
-      messageDiv.innerHTML = `
-        <i class="fas fa-times-circle icon-error"></i>
-        <h1>Errore nella conferma</h1>
-        <p>Il link di conferma non è valido o è già stato utilizzato. Assicurati di non aver già confermato l'account.</p>
-        <a href="https://foodgest.it/login" class="btn">Vai al login</a>
-      `;
-    } else {
-      // Nessun errore → successo
+    // ✅ Se NON ci sono errori → mostra successo
+    if (!error && !errorDescription) {
       messageDiv.innerHTML = `
         <i class="fas fa-check-circle icon-success"></i>
         <h1>Email confermata con successo!</h1>
         <p>Grazie! La tua email è stata verificata. Ora puoi accedere alla tua area riservata di FoodGest.</p>
+        <a href="https://foodgest.it/login" class="btn">Accedi ora</a>
       `;
+    }
+    // ❌ Se c'è un errore, controlliamo se è rilevante per la conferma email
+    else {
+      // Ignora errori di OTP (sono per il login, non per la conferma email)
+      if (error === 'access_denied' && errorDescription?.includes('otp_expired')) {
+        // Questo non è un errore di conferma email → probabilmente link di magic link scaduto
+        messageDiv.innerHTML = `
+          <i class="fas fa-clock icon-error"></i>
+          <h1>Link scaduto</h1>
+          <p>Il link di accesso è scaduto. Usa l'opzione "Accedi" per riceverne uno nuovo.</p>
+          <a href="https://foodgest.it/login" class="btn">Richiedi nuovo link</a>
+        `;
+      }
+      // Errore di conferma email: token invalido o già usato
+      else if (
+        errorDescription?.includes('token is invalid') ||
+        errorDescription?.includes('already been used') ||
+        errorDescription?.includes('email address is already verified')
+      ) {
+        messageDiv.innerHTML = `
+          <i class="fas fa-check-double icon-success"></i>
+          <h1>Email già confermata</h1>
+          <p>L'indirizzo email è già stato verificato con successo in precedenza.</p>
+          <a href="https://foodgest.it/login" class="btn">Accedi ora</a>
+        `;
+      }
+      // Errore generico
+      else {
+        messageDiv.innerHTML = `
+          <i class="fas fa-times-circle icon-error"></i>
+          <h1>Link non valido</h1>
+          <p>Il link di conferma non è valido o è stato modificato. Assicurati di aver cliccato sul link ricevuto via email.</p>
+          <a href="https://foodgest.it/login" class="btn">Contatta supporto</a>
+        `;
+      }
     }
   </script>
 </body>
